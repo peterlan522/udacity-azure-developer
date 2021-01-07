@@ -1,0 +1,30 @@
+az login
+
+# list all locations
+az account list-locations -o table
+
+# create resource group
+az group create --name resource-group-west --location westus2
+
+cd web
+
+# this will create a azure web app
+# the app name should be unique to Azure as a whole
+az webapp up \
+ --resource-group resource-group-west \
+ --name my-hello-world123 \
+ --sku F1 \
+ --verbose
+
+# If you want to update your app, make changes to your code and then run
+az webapp up \
+ --name hello-world1234 \
+ --verbose
+
+# Delete an App Service
+az webapp delete \
+    --name my-hello-world123 \
+    --resource-group resource-group-west
+
+# delete a resource group
+az group delete -n resource-group-west
