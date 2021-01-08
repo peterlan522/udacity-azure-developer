@@ -1,0 +1,14 @@
+
+# The storage will default to general purpose V2 and the access tier cannot be set, so it will default to hot.
+az storage account create \
+ --name helloworld12345 \
+ --resource-group resource-group-west \
+ --location westus2
+
+#  create our container
+az storage container create \
+ --account-name helloworld12345 \
+ --name images \
+ --auth-mode login \
+ --public-access container
+
