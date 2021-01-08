@@ -1,0 +1,59 @@
+az login
+
+# create resource group
+az group create --name resource-group-west --location westus2
+
+# create sql server first
+# the server name should be unique to Azure as a whole
+az sql server create \
+--admin-user udacityadmin \
+--admin-password p@ssword1234 \
+--name my-whatever-server123 \
+--resource-group resource-group-west \
+--location westus2 \
+--enable-public-network true \
+--verbose
+
+
+# Create Firewall rule
+
+# the first one is to allow Azure services and resources to access the server we just created.
+az sql server firewall-rule create \
+-g resource-group-west \
+-s my-whatever-server123 \
+-n azureaccess \
+--start-ip-address 0.0.0.0 \
+--end-ip-address 0.0.0.0 \
+--verbose
+
+# the second rule is to set your computer's public Ip address to the server's firewall.
+az sql server firewall-rule create \
+-g resource-group-west \
+-s my-whatever-server123 \
+-n clientip \
+--start-ip-address <PUBLIC-IP-ADDRESS> \
+--end-ip-address <PUBLIC_IP_ADDRESS> \
+--verbose
+
+# Create SQL Database
+az sql db create \
+--name my-sql-whatever-db123 \
+--resource-group resource-group-west \
+--server my-whatever-server123 \
+--tier Basic \
+--verbose
+
+
+# Delete DB
+az sql db delete \
+--name my-sql-whatever-db123 \
+--resource-group resource-group-west \
+--server my-whatever-server123 \
+--verbose
+
+# Delete SQL Server, which will also delete all sql databases in this SQL Server
+az sql server delete \
+--name my-whatever-server123 \
+--resource-group resource-group-west \
+--verbose
+
