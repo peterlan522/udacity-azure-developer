@@ -32,7 +32,8 @@ def logout():
         session.clear()
         # TODO: Also logout from your tenant's web session
         #   And make sure to redirect from there back to the login page
-        pass
+        return redirect(Config.AUTHORITY + '/oauth2/v2.0/logout' +
+     '?post_logout_redirect_uri=' + url_for('login', _external=True))
 
     return redirect(url_for('login'))
 
@@ -74,10 +75,13 @@ def _save_cache(cache):
 
 
 def _build_msal_app(cache=None, authority=None):
-    # TODO: Create and return a Confidential Client Application from msal
-    return None
+    return msal.ConfidentialClientApplication(Config.CLIENT_ID, authority=authority or Config.AUTHORITY,
+                                              client_credential=Config.CLIENT_SECRET, token_cache=cache)
 
 
 def _build_auth_url(authority=None, scopes=None, state=None):
-    # TODO: Get the authorization request URL from a built msal app, and return it
-    return None
+    return _build_msal_app(authority=authority).get_authorization_request_url(
+        scopes or [],
+        state=state or str(uuid.uuid4()),
+        redirect_uri=url_for('authorized', _external=True, _scheme='https')
+    )
